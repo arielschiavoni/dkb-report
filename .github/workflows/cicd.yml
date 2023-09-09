@@ -15,16 +15,14 @@ jobs:
         run: go get .
       - name: Test
         run: go test
-      - name: Generate build files
-        uses: thatisuday/go-build-action@v1
-        with:
-          platforms: "linux/amd64, darwin/arm64"
-          name: "dkb-report"
-          compress: "true"
-          dest: "dist"
+      - name: Build
+        run: |
+          GOOS=darwin GOARCH=arm64 go build -o dist/dkb-report-macos-arm64 dkb-report.go
+          GOOS=linux GOARCH=amd64 go build -o dist/dkb-report-linux-amd64 dkb-report.go
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            dist
+            dist/dkb-report-macos-arm64
+            dist/dkb-report-linux-amd64
